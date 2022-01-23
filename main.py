@@ -2,9 +2,12 @@ import json
 import requests
 import math
 from typing import List
+import os
 
 from fastapi import FastAPI
 from fastapi.responses import RedirectResponse
+
+from twilio.rest import Client
 
 app = FastAPI()
 
@@ -46,6 +49,17 @@ def db_timeSinceLastMessage(phone, measure):
         return 60
     elif measure == 'PM2.5':
         return 60
+
+# tw_*: twilio integration
+
+def tw_getKeys():
+    return [os.getenv('TWILIO_ACCOUNT_SID'), os.getenv('TWILIO_AUTH_TOKEN'), os.getenv('TWILIO_MESSAGING_SID')]
+
+def tw_sendWarning(phone, measure, level):
+    account_sid, auth_token, msg_sid = tw_getKeys()
+    client = Client(account_sid, auth_token)
+    body = measure + ' gildi er ' + str(level)
+    message = client.messages.create(from_='+3546323514', messaging_service_sid=msg_sid, body=body, to='+' + phone)
 
 @app.get('/')
 async def front_page():
