@@ -92,3 +92,19 @@ async def get_current_station_data(id: str, measure: str):
     unit = stations_one_day_data[id]['parameters'][measure]['unit']
     
     return {'station_id': id, 'timestamp': measurement_endtime, 'measurement_variable': measure, 'value': value, 'unit': unit}
+
+@app.post('/register-alarm')
+async def register_alarm(phone_number: str, lat: float, lon: float, variable: str, passkey: str):
+    pass
+
+@app.post('/deregister-alarm')
+async def deregister_alarm(phone_number: str, variable: str, passkey: str):
+    pass
+
+@app.post('/list-alarms')
+async def list_alarms(phone_number: str, passkey: str):
+    pass
+
+@app.get('/get-passkey')
+async def get_passkey(phone_number: str):
+    pass
