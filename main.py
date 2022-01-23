@@ -22,6 +22,31 @@ def dist(lat1, lon1, lat2, lon2):
     c = 2 * math.atan2(math.sqrt(a), math.sqrt(1-a))
     return earthRadius * c
 
+# db_*: get info from DB
+# phone numbers must always include country codes, but never 00 or +, which are added in the send functions.
+
+def db_getMeasures(phone):
+    # looks up measures the phone number requests and returns as a list
+    return ['H2S', 'PM2.5']
+
+def db_getSettings(phone):
+    # settings: {'sensitivity': {measure 1: sensitivity, measure 2: sensitivity}, 'frequency': {measure 1: frequency}}
+    # sensitivity = threshold for warning.
+    # frequency = once per hour, once per day...?
+    return {'sensitivity': {'H2S': 50, 'PM2.5': 70}, 'frequency': {'H2S': 'hourly', 'PM2.5': 'daily'}}
+
+def db_getSensitivity(phone, measure):
+    return db_getSettings(phone)['sensitivity'][measure]
+
+def db_getFrequency(phone, measure):
+    return db_getSettings(phone)['frequency'][measure]
+
+def db_timeSinceLastMessage(phone, measure):
+    if measure == 'H2S':
+        return 60
+    elif measure == 'PM2.5':
+        return 60
+
 @app.get('/')
 async def front_page():
     return RedirectResponse(url='/docs')
