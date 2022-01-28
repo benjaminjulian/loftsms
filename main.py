@@ -1,9 +1,11 @@
 import json
-import requests
 import math
+import requests
+import sqlite3
 from typing import List
 import os
 
+# Third-party libraries
 from fastapi import FastAPI
 from fastapi.responses import RedirectResponse
 
