@@ -10,8 +10,10 @@ from fastapi.responses import RedirectResponse
 from sqlalchemy.orm import Session
 from twilio.rest import Client
 
-from . import crud, models, schemas
-from .database import SesionLocal, engine
+import crud
+import schemas
+import models
+from database import SessionLocal, engine
 
 models.Base.metadata.create_all(bind=engine) # Replace, look at alembic
 
