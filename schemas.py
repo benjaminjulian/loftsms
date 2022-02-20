@@ -22,7 +22,7 @@ class UserBase(BaseModel):
   pass_code_valid: bool
   
 class UserCreate(UserBase):
-  pass_code: str
+  pass_code: int
   
 class User(UserBase):
   id: int

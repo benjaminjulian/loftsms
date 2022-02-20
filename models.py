@@ -16,7 +16,7 @@ class User(Base):
     
 class Alarm(Base):
     __tablename__ = 'alarms'
-    
+
     id = Column(Integer, primary_key=True, index=True)
     alarm_name = Column(String)
     owner_id = Column(Integer, ForeignKey('users.id'))

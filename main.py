@@ -1,17 +1,29 @@
 import json
 import math
 import requests
-import sqlite3
 from typing import List
 import os
 
 # Third-party libraries
-from fastapi import FastAPI
+from fastapi import Depends, FastAPI, HTTPException
 from fastapi.responses import RedirectResponse
-
+from sqlalchemy.orm import Session
 from twilio.rest import Client
 
+from . import crud, models, schemas
+from .database import SesionLocal, engine
+
+models.Base.metadata.create_all(bind=engine) # Replace, look at alembic
+
 app = FastAPI()
+
+# Dependency
+def get_db():
+    db = SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()
 
 def degreesToRadians(deg):
     return math.pi * deg / 180
@@ -149,3 +161,18 @@ async def list_alarms(phone_number: str, passkey: str):
 @app.get('/get-passkey')
 async def get_passkey(phone_number: str):
     pass
+
+@app.post('/users/', response_model=schemas.User)
+def create_user(user: schemas.UserCreate, db: Session = Depends(get_db)):
+    db_user = crud.get_user_by_phone(db, phone_number=user.phone_number)
+    if db_user:
+        raise HTTPException(status_code=400, detail="Phone number already registered")
+    return crud.create_user(db=db, user=user)
+
+
+@app.get('/user/{user_id}', response_model=schemas.User)
+def get_user(user_id: int, db: Session = Depends(get_db)):
+    db_user = crud.get_user(db, user_id=user_id)
+    if db_user is None:
+        raise HTTPException(status_code=404, detail="User not found")
+    return db_user
